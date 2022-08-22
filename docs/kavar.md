@@ -2,7 +2,7 @@
 
 ## Introdução
 
-Este documento visa estabelecer um conhecimento prévio da linguagem Kavar, pertentence a família C, pois ela será explorada minuciosamente durante a construção do compilador. 
+Este documento visa estabelecer um conhecimento prévio da linguagem Kavar, pertentence a família C, pois ela será explorada minuciosamente durante a construção do compilador.
 
 ---
 
@@ -12,25 +12,25 @@ O código abaixo exibe uma frase na tela:
 
 `print "Hello world";`
 
-A omissão dos parenteses indica que se trata de uma função pré-feita da própria linguagem. Portanto, não se refere a uma função criada pelo usuário.
+A omissão dos parenteses indica que se trata de uma função pré-feita (*statement*) da própria linguagem. Portanto, não se refere a uma função criada pelo usuário.
 
 ---
 
 ## Tipos de Dados
 
-* **Boolean**: adiciona lógica à linguagem, podendo assumir entre dois valores, falso ou verdadeiro.
+* **Boolean**: adiciona lógica à linguagem, podendo assumir entre os valores falso ou verdadeiro.
   * `false;`
   * `true;`
-* **Números**: Kavar possui somente um tipo de dados para representar números, number, que é o ponto flutuante de dupla precisão. Uma vez que este formato suporta os números inteiros, simplificará a linguagem. 
+* **Números**: Kavar possui somente um tipo de dados para representar números, `number`, que é o ponto flutuante de dupla precisão. Uma vez que este formato suporta os números inteiros, mantém a linguagem simplificada.
   * `1234;`
   * `12.648;`
-* **Strings**: tratar textos é uma tarefa essencial de qualquer linguagem. As *strings* serão identificadas sempre que estiverem dentro de aspas duplas.
+* **Strings**: tratar textos é uma tarefa essencial de qualquer linguagem. Portanto, as *strings* serão identificadas sempre que estiverem dentro de aspas duplas.
   * `"String de texto";`
   * `""; // indica uma string vazia.`
   * `"1234"; // continua sendo uma string.`
 * **Nil**: um tipo de dados vazio, que não representa nada. Utilizou-se *nil* ao invés de *null* porque a segunda palavra já está reservada para a linguagem Java.
 
-Conforme pode ser visto, utilize as duas barras (`//`) para indicar o início de um comentário onde a quebra de linha (`\n` ou `\r`) indica seu fim.
+Conforme pode ser visto, utilize as duas barras (`//`) para indicar o início de um comentário, onde a quebra de linha (`\n` ou `\r`) indica seu fim.
 
 ---
 
@@ -64,7 +64,7 @@ As operações comumente utilizadas por outras linguagens também estão present
 
 Tentar dividir um número diretamente por 0 resultará em erro de compilação, mas interromperá a aplicação caso aconteça em tempo de execução.
 
-Não é possível utilizar expressões aritméticas em valores *booleanos*, porém a adição é permitida com *strings*.
+Não é possível utilizar expressões aritméticas em valores *booleanos*, porém somente a adição é permitida com *strings*.
 
 ### *Comparação e Equivalência*
 
@@ -75,11 +75,12 @@ maior > que;
 maiorQue >= ouIgualA;
 ```
 
-Para testar equivalência ou desigualdade:
+Para verificar equivalência ou desigualdade:
 
 ```c
 11 == 2; // resulta em falso.`
 "house" != "casa"; // resulta em verdadeiro.
+false != true;
 ```
 
 Comparar valores de tipos diferentes nunca resultará em verdadeiro, pois não haverá conversões implícitas de variáveis:
@@ -108,6 +109,8 @@ Há três operadores lógicos disponíveis, são eles:
 
 ## Controles de fluxo
 
+Para tomada de decisão:
+
 ```c
 if (condicao) {
     print "sim";
@@ -115,6 +118,8 @@ if (condicao) {
     print "nao";
 }
 ```
+
+Para repetir instruções enquanto determinada condição for verdadeira:
 
 ```c
 number b = 1;
@@ -124,20 +129,22 @@ while (b < 4) {
 }
 ```
 
+Para repetir instruções por uma quantidade previamente estipulada:
+
 ```c
 for (number a := 1; a < 10; a := a + 1) {
     print a
 }
 ```
 
-A variável utilizada dentro do laço de repetição `for` pode ser declarada junto com a estrutura de controle de fluxo.
+A variável utilizada dentro do laço de repetição `for` pode ser declarada junto com própria estrutura de controle de fluxo.
 
 ## Funções
 
 A declaração de uma função deve ocorrer previamente antes de ser utilizada, seja apenas declarando ou instanciando com um valor. Para declarar uma função, sem parâmetros:
 
 ```c
-function arrumarCasa() {
+void fun arrumarCasa() {
 
 }
 ```
@@ -145,7 +152,7 @@ function arrumarCasa() {
 Para declarar uma função, com parâmetros:
 
 ```c
-function arrumarCasa(string piso, string vassoura) {
+void fun arrumarCasa(string piso, string vassoura) {
 
 }
 ```
@@ -153,13 +160,17 @@ function arrumarCasa(string piso, string vassoura) {
 Para fazer uma chamada à função, sem parâmetros:
 
 ```c
-arrumarCasa()
+arrumarCasa();
 ```
 
 Com parâmetros:
 
 ```c
-arrumarCasa(piso, vassoura)
+arrumarCasa(piso, vassoura);
 ```
 
-Não é possível passar funções como parâmetros para ser utilizada como callback.
+* A variável que armazenará o conteúdo retornado pela função deve ser o mesmo que o estipulado pela própria função.
+* Os parâmetros opcionais são declarados como uma atribuição comum:
+  * `void fun sum(number numberOne, number numberTwo, number numberThree := 4) {`
+  * Entretanto, eles **devem** ser especificados por último na sequência de parâmetros.
+* Não é possível passar funções como parâmetros para serem utilizadas como *callback*.
