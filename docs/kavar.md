@@ -10,7 +10,7 @@ Este documento visa estabelecer um conhecimento prévio da linguagem Kavar, pert
 
 O código abaixo exibe uma frase na tela:
 
-`print "Hello world";`
+`write "Hello world";`
 
 A omissão dos parenteses indica que se trata de uma função pré-feita (*statement*) da própria linguagem. Portanto, não se refere a uma função criada pelo usuário.
 
@@ -78,14 +78,14 @@ maiorQue >= ouIgualA;
 Para verificar equivalência ou desigualdade:
 
 ```c
-11 == 2; // resulta em falso.`
-"house" != "casa"; // resulta em verdadeiro.
-false != true;
+11 === 2; // resulta em falso.`
+"house" <> "casa"; // resulta em verdadeiro.
+false <> true;
 ```
 
 Comparar valores de tipos diferentes nunca resultará em verdadeiro, pois não haverá conversões implícitas de variáveis:
 
-`123 == "123"; // resulta em falso.`
+`123 === "123"; // resulta em falso.`
 
 ### *Operadores Lógicos*
 
@@ -97,7 +97,7 @@ Há três operadores lógicos disponíveis, são eles:
 
 ### *Precedência e Agrupamento*
 
-`number media = (minimo + maximo) / 2;`
+`number media := (minimo + maximo) / 2;`
 
 1. parênteses.
 2. negação.
@@ -113,9 +113,9 @@ Para tomada de decisão:
 
 ```c
 if (condicao) {
-    print "sim";
+    write "sim";
 } else {
-    print "nao";
+    write "nao";
 }
 ```
 
@@ -124,7 +124,7 @@ Para repetir instruções enquanto determinada condição for verdadeira:
 ```c
 number b = 1;
 while (b < 4) {
-    print b;
+    write b;
     b := b + 1;
 }
 ```
@@ -133,7 +133,7 @@ Para repetir instruções por uma quantidade previamente estipulada:
 
 ```c
 for (number a := 1; a < 10; a := a + 1) {
-    print a
+    write a;
 }
 ```
 
