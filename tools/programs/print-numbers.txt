@@ -1,0 +1,31 @@
+void fun printNumbers(number quant) {
+    if (quant < 0 || quant > 182920392) {
+	return;
+    } else {
+	quant := quant * 2;
+    }
+    
+    for (number i := 0; i < quant; i := i + 2) {
+	write number + "\n";
+    }
+}
+
+number fun main(string args) {
+    bool running := true;
+
+    // This program will run until the user enter 'c' or 'C'.
+    while (running === true) {
+	write "Enter a number or C to cancel";
+
+	read argument;
+
+	if (argument === "c" || argument === "C") {
+	    running := false;
+	    return 0;
+	}
+
+	num := parse argument;
+
+	printNumbers(num)
+    }
+}
