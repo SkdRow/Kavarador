@@ -1,0 +1,32 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package model;
+
+/**
+ *
+ * @author guilherme.tonetti
+ */
+public enum TokenType {
+    // Tokens de apenas um caractere.
+    PARENTESES_ESQ, PARENTESES_DIR, CHAVES_ESQ, CHAVES_DIR, VIRGULA, PONTO, MENOS,
+    MAIS, PONTO_VIRGULA, BARRA, ESTRELA, NEGACAO,
+    
+    // Tokens de dois caracteres.
+    IGUAL, NAO_IGUAL,
+    MAIOR, MAIOR_IGUAL,
+    MENOR, MENOR_IGUAL,
+    OU, E,
+    ATRIBUICAO,
+    
+    // Literais.
+    IDENTIFICADOR, STRING_LITERAL, NUMBER_LITERAL,
+    
+    // Palavras-chave.
+    FUN, WHILE, STRING_VAR, NUMBER_VAR, BOOLEAN, IF, ELSE, FALSE, TRUE, RETURN,
+    NIL, WRITE,
+    
+    EOF
+}
