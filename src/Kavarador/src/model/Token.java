@@ -10,10 +10,10 @@ package model;
  * @author android
  */
 public class Token {
-    private int linha; // Será usado ao reportar o erro.
-    private TokenType tipoToken;
-    private Object literal; // Identificador
-    private String lexeme; // 
+    private final int linha; // Será usado ao reportar o erro.
+    private final TokenType tipoToken;
+    private final Object literal; // Identificador
+    private final String lexeme; // 
 
     public Token(int linha, TokenType tipoToken, Object literal, String lexeme) {
         this.linha = linha;

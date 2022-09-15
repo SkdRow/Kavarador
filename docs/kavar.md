@@ -60,7 +60,6 @@ As operações comumente utilizadas por outras linguagens também estão present
 * `12 - 9;`
 * `45 * 1;`
 * `5 / 4;`
-* `-negar;`
 
 Tentar dividir um número diretamente por 0 resultará em erro de compilação, mas interromperá a aplicação caso aconteça em tempo de execução.
 
@@ -78,14 +77,14 @@ maiorQue >= ouIgualA;
 Para verificar equivalência ou desigualdade:
 
 ```c
-11 === 2; // resulta em falso.`
+11 == 2; // resulta em falso.`
 "house" <> "casa"; // resulta em verdadeiro.
 false <> true;
 ```
 
 Comparar valores de tipos diferentes nunca resultará em verdadeiro, pois não haverá conversões implícitas de variáveis:
 
-`123 === "123"; // resulta em falso.`
+`123 == "123"; // resulta em falso.`
 
 ### *Operadores Lógicos*
 

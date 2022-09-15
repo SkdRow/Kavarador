@@ -15,7 +15,7 @@ public enum TokenType {
     MAIS, PONTO_VIRGULA, BARRA, ESTRELA, NEGACAO,
     
     // Tokens de dois caracteres.
-    IGUAL, NAO_IGUAL,
+    IGUAL, DIFERENTE,
     MAIOR, MAIOR_IGUAL,
     MENOR, MENOR_IGUAL,
     OU, E,
@@ -26,7 +26,7 @@ public enum TokenType {
     
     // Palavras-chave.
     FUN, WHILE, STRING_VAR, NUMBER_VAR, BOOLEAN, IF, ELSE, FALSE, TRUE, RETURN,
-    NIL, WRITE,
+    NIL, WRITE, FOR,
     
     EOF
 }

@@ -19,7 +19,7 @@ import model.Token;
  * @author guillherme.tonetti
  */
 public class Kavarador {
-    private static boolean hadError = false;
+    private static boolean teveErro = false;
 
     /**
      * @param args the command line arguments
@@ -68,7 +68,7 @@ public class Kavarador {
             executar(linha);
             
         //> Reseta o hadError, pois não houve erro nesta linha.
-            hadError = false;
+            teveErro = false;
         }
     }
     
@@ -92,6 +92,6 @@ public class Kavarador {
     public static void reportarErro(int linha, String onde, String mensagem) {
         System.err.println("[line " + linha + "] Error " + onde + ": " + mensagem);
         
-        hadError = true;
+        teveErro = true;
     }
 }
