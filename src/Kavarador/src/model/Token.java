@@ -7,7 +7,7 @@ package model;
 
 /**
  *
- * @author android
+ * @author guilherme.tonetti
  */
 public class Token {
     private final int linha; // Será usado ao reportar o erro.

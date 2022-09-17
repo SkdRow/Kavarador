@@ -76,9 +76,9 @@ public class Kavarador {
         Scanner scanner = new Scanner(source);
         List<Token> tokens = scanner.lerTokens();
         
-        for (Token token : tokens) {
+        tokens.forEach((token) -> {
             System.out.println(token);
-        }
+        });
     }
     
     /**

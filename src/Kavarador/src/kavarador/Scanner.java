@@ -6,7 +6,9 @@
 package kavarador;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import model.Token;
 import model.TokenType;
 
@@ -14,7 +16,7 @@ import static model.TokenType.*;
 
 /**
  *
- * @author android
+ * @author guilherme.tonetti
  */
 public class Scanner {
     private final String source;
@@ -22,6 +24,24 @@ public class Scanner {
     private int tokenStart = 0; // Aponta para o primeiro caractere do lexeme.
     private int currentCaracter = 0; // Aponta para o caractere sendo lido no momento.
     private int linha = 1;
+    private static final Map<String, TokenType> palavras_chave;
+    
+    static {
+        palavras_chave = new HashMap<>();
+        palavras_chave.put("false",   FALSE);
+        palavras_chave.put("true",    TRUE);
+        palavras_chave.put("nil",     NIL);
+        palavras_chave.put("if",      IF);
+        palavras_chave.put("else",    ELSE);
+        palavras_chave.put("for",     FOR);
+        palavras_chave.put("fun",     FUN);
+        palavras_chave.put("while",   WHILE);
+        palavras_chave.put("string",  STRING_VAR);
+        palavras_chave.put("number",  NUMBER_VAR);
+        palavras_chave.put("boolean", BOOLEAN);
+        palavras_chave.put("return",  RETURN);
+        palavras_chave.put("write",   WRITE);
+    };
     
     public Scanner(String source) {
         this.source = source;
@@ -53,21 +73,21 @@ public class Scanner {
      * quantidade de erros possível em uma única compilação.
      */
     private void lerProximoToken() {
-        switch (avancar()) {
+        char token = avancar();
+        switch (token) {
             // Caracteres que não precisam de tratamento para serem identificados.
             case '(': adicionarToken(PARENTESES_ESQ); break;
             case ')': adicionarToken(PARENTESES_DIR); break;
             case '{': adicionarToken(CHAVES_ESQ); break;
             case '}': adicionarToken(CHAVES_DIR); break;
             case ',': adicionarToken(VIRGULA); break;
-            case '.': adicionarToken(PONTO); break;
             case '-': adicionarToken(MENOS); break;
             case '+': adicionarToken(MAIS); break;
             case ';': adicionarToken(PONTO_VIRGULA); break;
             case '*': adicionarToken(ESTRELA); break;
-            // Para os próximos caracteres, há a possiblidade do seguinte pertencer
-            // a outra palavra-chave, portanto precisa identificá-lo.
             case '!': adicionarToken(NEGACAO); break;
+             // Para os próximos caracteres, há a possiblidade do seguinte pertencer
+            // a outra palavra-chave, portanto precisa identificá-lo.
             case '>': 
                 adicionarToken(verificarProximoToken('=')
                     ? MAIOR_IGUAL
@@ -90,7 +110,7 @@ public class Scanner {
                 if (verificarProximoToken('/')) {
                     // É um comentário, portanto somente deve finalizar no término
                     // da respectiva linha.
-                    while (olharParaFrente() != '\n' && !estaNoFim()) avancar();
+                    while (olhar() != '\n' && !estaNoFim()) avancar();
                 } else {
                     adicionarToken(BARRA);
                 }
@@ -126,8 +146,14 @@ public class Scanner {
                 }
                 break;
             default:
-                // Algum caractere não reconhecido foi encontrado no script
-                Kavarador.reportarErro(this.linha, "", "Caractere inesperado");
+                if (Character.isDigit(token)) {
+                    adicionarNumero();
+                } else if (alfanumerico(token)) {
+                    adicionarIdentificador();
+                } else {
+                    // Algum caractere não reconhecido foi encontrado no script
+                    Kavarador.reportarErro(this.linha, "", "Caracter inesperado");
+                }
                 break;
         }
     }
@@ -156,14 +182,67 @@ public class Scanner {
      * 
      */
     private void adicionarString() {
-        while (olharParaFrente() != '"' && !estaNoFim()) {
-            if (olharParaFrente() == '\n') this.linha++;
+        while (olhar() != '"' && !estaNoFim()) {
+            if (olhar() == '\n') this.linha++;
             avancar();
         }
         
         if (estaNoFim()) {
             Kavarador.reportarErro(this.linha, "", "String não terminada.");
+            return;
         }
+        
+        // Como ele somente olhou o próximo caractere e identificou que é uma aspas
+        // fechando, precisa avançar o contador.
+        avancar();
+        
+        // Retira as aspas duplas para adicionar somente o valor da string.
+        String literal = this.source.substring(tokenStart + 1, currentCaracter - 1);
+        adicionarToken(STRING_LITERAL, literal);
+    }
+    
+    /**
+     * O Kavar não permite adicionar pontuação no ínicio ou no fim do número.
+     */
+    private void adicionarNumero() {
+        // Consumir a quantidade que der para os números.
+        while (Character.isDigit(olhar())) {
+            avancar();
+        }
+        
+        if (olhar() == '.' && !Character.isDigit(olharProximo())) {
+            Kavarador.reportarErro(linha, "", "O número não pode ser terminado com ponto.");
+            return;
+        }
+        
+        // Identificar se é um número fracional.
+        if (olhar() == '.') {
+            avancar();
+            
+            while (Character.isDigit(olhar())) avancar(); 
+        }
+        
+        adicionarToken(
+                NUMBER_LITERAL,
+                Double.parseDouble(source.substring(tokenStart, currentCaracter)));
+    }
+    
+    /**
+     * 
+     */
+    private void adicionarIdentificador() {
+        while (identificadorValido(olhar())) {
+            avancar();
+        }
+        
+        String value = source.substring(tokenStart, currentCaracter);
+        TokenType tokenType = palavras_chave.get(value);
+        
+        if (tokenType == null) {
+            tokenType =  IDENTIFICADOR;
+        }
+        
+        adicionarToken(tokenType, value);
     }
     
     /**
@@ -181,6 +260,22 @@ public class Scanner {
     }
     
     /**
+     * Verifica se o caracter é uma letra ou underline.
+     * 
+     * @param c
+     * @return verdadeiro caso seja, falso caso não.
+     */
+    private boolean alfanumerico(char c) {
+        return (c >= 'a' && c <= 'z') ||
+               (c >= 'A' && c <= 'Z') ||
+               (c == '_');
+    }
+    
+    private boolean identificadorValido(char c) {
+        return alfanumerico(c) || Character.isDigit(c);
+    }
+    
+    /**
      * Esta função utiliza a técnica lookahead, identificando o próximo caractere
      * sem incrementar o contador.
      * 
@@ -190,9 +285,18 @@ public class Scanner {
      * 
      * @return O caractere que está logo na frente do próximo token.
      */
-    private char olharParaFrente() {
+    private char olhar() {
         if (estaNoFim()) return '\0';
         return source.charAt(currentCaracter);
+    }
+    
+    /**
+     * 
+     * @return 
+     */
+    private char olharProximo() {
+        if (currentCaracter + 1 >= this.source.length()) return '\0';
+        return source.charAt(currentCaracter + 1);
     }
     
     /**
@@ -202,7 +306,7 @@ public class Scanner {
      * Retorna falso caso não esteja, verdadeiro caso contrário.
      */
     private boolean estaNoFim() {
-        return this.currentCaracter >= this.source.length();
+        return currentCaracter >= source.length();
     }
     
     /**
@@ -210,6 +314,6 @@ public class Scanner {
      * @return 
      */
     private char avancar() {
-        return this.source.charAt(this.currentCaracter++);
+        return source.charAt(this.currentCaracter++);
     }
 }

@@ -11,7 +11,7 @@ package model;
  */
 public enum TokenType {
     // Tokens de apenas um caractere.
-    PARENTESES_ESQ, PARENTESES_DIR, CHAVES_ESQ, CHAVES_DIR, VIRGULA, PONTO, MENOS,
+    PARENTESES_ESQ, PARENTESES_DIR, CHAVES_ESQ, CHAVES_DIR, VIRGULA, MENOS,
     MAIS, PONTO_VIRGULA, BARRA, ESTRELA, NEGACAO,
     
     // Tokens de dois caracteres.
