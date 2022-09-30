@@ -22,6 +22,22 @@ public class Token {
         this.lexeme = lexeme;
     }
 
+    public int getLinha() {
+        return linha;
+    }
+
+    public TokenType getTipoToken() {
+        return tipoToken;
+    }
+
+    public Object getLiteral() {
+        return literal;
+    }
+
+    public String getLexeme() {
+        return lexeme;
+    }
+
     @Override
     public String toString() {
         StringBuilder token = new StringBuilder();

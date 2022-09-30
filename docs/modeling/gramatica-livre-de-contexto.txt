@@ -1,0 +1,11 @@
+Utliza a técnica Recursive descent parser:
+https://en.wikipedia.org/wiki/Recursive_descent_parser
+
+expressão    -> igualdade;
+igualdade    -> comparação ( ( "<>" | "==" ) comparação )* ;
+comparação   -> termo ( ( ">" | ">=" | "<" | "<=" ) termo )* ;
+termo        -> fator ( ( "-" | "+" ) fator )* ;
+fator	     -> unaria ( ( "/" | "*" ) unaria )* ;
+unaria	     -> ( "!" | "-" )* unaria | primaria ; 
+primaria     -> NUMBER | STRING | "true" | "false" | "nil"
+		| "(" expressão ")" ;

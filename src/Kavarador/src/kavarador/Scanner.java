@@ -58,6 +58,8 @@ public class Scanner {
             lerProximoToken();
         }
         
+        this.tokens.add(new Token(linha, EOF, null, ""));
+        
         return this.tokens;
     }
     

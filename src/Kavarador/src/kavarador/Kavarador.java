@@ -14,6 +14,8 @@ import java.nio.file.Paths;
 import java.util.List;
 import model.Token;
 
+import static model.TokenType.*;
+
 /**
  *
  * @author guillherme.tonetti
@@ -76,9 +78,12 @@ public class Kavarador {
         Scanner scanner = new Scanner(source);
         List<Token> tokens = scanner.lerTokens();
         
-        tokens.forEach((token) -> {
-            System.out.println(token);
-        });
+        Parser parser = new Parser(tokens);
+        Expressao expressao = parser.parse();
+        
+        if (teveErro) return;
+        
+        System.out.println(new AstPrinter().print(expressao));
     }
     
     /**
@@ -93,5 +98,13 @@ public class Kavarador {
         System.err.println("[line " + linha + "] Error " + onde + ": " + mensagem);
         
         teveErro = true;
+    }
+    
+    public static void reportarErro(Token token, String mensagem) {
+        if (token.getTipoToken() == EOF) {
+            reportarErro(token.getLinha(), " no fim", mensagem);
+        } else {
+            reportarErro(token.getLinha(), " no " + token.getLexeme() + "'", mensagem);
+        }
     }
 }
