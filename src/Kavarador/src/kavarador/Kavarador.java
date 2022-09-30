@@ -75,7 +75,7 @@ public class Kavarador {
     }
     
     private static void executar(String source) {
-        Scanner scanner = new Scanner(source);
+        Leitor scanner = new Leitor(source);
         List<Token> tokens = scanner.lerTokens();
         
         Parser parser = new Parser(tokens);

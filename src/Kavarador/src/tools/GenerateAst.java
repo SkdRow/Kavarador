@@ -49,7 +49,7 @@ public class GenerateAst {
     }
     
     private static void defineType(PrintWriter writer, String baseName, String className, String fieldList) {
-        writer.println("  static class " + className + " extends " + baseName + " {");
+        writer.println("    static class " + className + " extends " + baseName + " {");
 
         // Constructor.
         writer.println("    " + className + "(" + fieldList + ") {");
@@ -66,7 +66,8 @@ public class GenerateAst {
         // Visitor pattern.
         writer.println();
         writer.println("    @Override");
-        writer.println("    <R> R accept(Visitor<R> visitor) {");
+        writer.println("        <R> R accept(Visitor<R> visitor) {");
+        
         writer.println("      return visitor.visit" +
             baseName + className + "(this);");
         writer.println("    }");
@@ -86,14 +87,14 @@ public class GenerateAst {
         
         for (String type : types) {
             String typeName = type.split(":")[0].trim();
-            writer.println("    R visit" + baseName + typeName + "(" +
+            writer.println("        R visit" + baseName + typeName + "(" +
                 typeName + " " + baseName.toLowerCase() + ");");
         }
         
-        writer.println("  }");
+        writer.println("    }");
         
         // The base accept() method.
         writer.println();
-        writer.println("  abstract <R> R accept(Visitor<R> visitor);");
+        writer.println("    abstract <R> R accept(Visitor<R> visitor);\n");
     }
 }

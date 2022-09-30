@@ -18,11 +18,11 @@ import static model.TokenType.*;
  *
  * @author guilherme.tonetti
  */
-public class Scanner {
+public class Leitor {
     private final String source;
     private final List<Token> tokens = new ArrayList<>();
-    private int tokenStart = 0; // Aponta para o primeiro caractere do lexeme.
-    private int currentCaracter = 0; // Aponta para o caractere sendo lido no momento.
+    private int inicioToken = 0; // Aponta para o primeiro caractere do lexeme.
+    private int caractereAtual = 0; // Aponta para o caractere sendo lido no momento.
     private int linha = 1;
     private static final Map<String, TokenType> palavras_chave;
     
@@ -43,7 +43,7 @@ public class Scanner {
         palavras_chave.put("write",   WRITE);
     };
     
-    public Scanner(String source) {
+    public Leitor(String source) {
         this.source = source;
     }
     
@@ -54,7 +54,7 @@ public class Scanner {
     public List<Token> lerTokens() {
         while (!this.estaNoFim()) {
             // A cada execução do loop, executará o próximo token individualmente.
-            this.tokenStart = this.currentCaracter;
+            this.inicioToken = this.caractereAtual;
             lerProximoToken();
         }
         
@@ -88,7 +88,7 @@ public class Scanner {
             case ';': adicionarToken(PONTO_VIRGULA); break;
             case '*': adicionarToken(ESTRELA); break;
             case '!': adicionarToken(NEGACAO); break;
-             // Para os próximos caracteres, há a possiblidade do seguinte pertencer
+            // Para os próximos caracteres, há a possiblidade do seguinte pertencer
             // a outra palavra-chave, portanto precisa identificá-lo.
             case '>': 
                 adicionarToken(verificarProximoToken('=')
@@ -176,7 +176,7 @@ public class Scanner {
      * @param literal 
      */
     private void adicionarToken(TokenType tipoToken, Object literal) {
-        String text = source.substring(tokenStart, currentCaracter);
+        String text = source.substring(inicioToken, caractereAtual);
         tokens.add(new Token(linha, tipoToken, literal, text));
     }
     
@@ -199,7 +199,7 @@ public class Scanner {
         avancar();
         
         // Retira as aspas duplas para adicionar somente o valor da string.
-        String literal = this.source.substring(tokenStart + 1, currentCaracter - 1);
+        String literal = this.source.substring(inicioToken + 1, caractereAtual - 1);
         adicionarToken(STRING_LITERAL, literal);
     }
     
@@ -226,7 +226,7 @@ public class Scanner {
         
         adicionarToken(
                 NUMBER_LITERAL,
-                Double.parseDouble(source.substring(tokenStart, currentCaracter)));
+                Double.parseDouble(source.substring(inicioToken, caractereAtual)));
     }
     
     /**
@@ -237,7 +237,7 @@ public class Scanner {
             avancar();
         }
         
-        String value = source.substring(tokenStart, currentCaracter);
+        String value = source.substring(inicioToken, caractereAtual);
         TokenType tokenType = palavras_chave.get(value);
         
         if (tokenType == null) {
@@ -255,9 +255,9 @@ public class Scanner {
      */
     private boolean verificarProximoToken(char caracterEsperado) {
         if (estaNoFim()) return false;
-        if (source.charAt(currentCaracter) != caracterEsperado) return false;
+        if (source.charAt(caractereAtual) != caracterEsperado) return false;
         
-        currentCaracter++;
+        caractereAtual++;
         return true;
     }
     
@@ -289,7 +289,7 @@ public class Scanner {
      */
     private char olhar() {
         if (estaNoFim()) return '\0';
-        return source.charAt(currentCaracter);
+        return source.charAt(caractereAtual);
     }
     
     /**
@@ -297,8 +297,8 @@ public class Scanner {
      * @return 
      */
     private char olharProximo() {
-        if (currentCaracter + 1 >= this.source.length()) return '\0';
-        return source.charAt(currentCaracter + 1);
+        if (caractereAtual + 1 >= this.source.length()) return '\0';
+        return source.charAt(caractereAtual + 1);
     }
     
     /**
@@ -308,7 +308,7 @@ public class Scanner {
      * Retorna falso caso não esteja, verdadeiro caso contrário.
      */
     private boolean estaNoFim() {
-        return currentCaracter >= source.length();
+        return caractereAtual >= source.length();
     }
     
     /**
@@ -316,6 +316,6 @@ public class Scanner {
      * @return 
      */
     private char avancar() {
-        return source.charAt(this.currentCaracter++);
+        return source.charAt(this.caractereAtual++);
     }
 }
