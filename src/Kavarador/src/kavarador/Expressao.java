@@ -19,6 +19,7 @@ abstract class Expressao {
         R visitGroupingExpressao(Agrupamento expr);
         R visitLiteralExpressao(Literal expr);
         R visitUnaryExpressao(Unaria expr);
+        R visitVariableExpresssao(Variavel expr);
     }
     
     static class Atribuicao extends Expressao {
@@ -91,6 +92,19 @@ abstract class Expressao {
         @Override
         <R> R accept(Visitor<R> visitor) {
             return visitor.visitUnaryExpressao(this);
+        }
+    }
+    
+    static class Variavel extends Expressao {
+        final Token name;
+        
+        Variavel(Token name) {
+            this.name = name;
+        }
+
+        @Override
+        <R> R accept(Visitor<R> visitor) {
+            return visitor.visitVariableExpresssao(this);
         }
     }
 }

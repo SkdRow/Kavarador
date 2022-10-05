@@ -21,7 +21,9 @@ import static model.TokenType.*;
  * @author guillherme.tonetti
  */
 public class Kavarador {
+    private static final Compilador compilador = new Compilador();
     private static boolean teveErro = false;
+    private static boolean teveErroEmTempoDeExecucao = false;
 
     /**
      * @param args the command line arguments
@@ -46,6 +48,9 @@ public class Kavarador {
     private static void executarScript(String path) throws IOException {
         byte[] bytes = Files.readAllBytes(Paths.get(path));
         executar(new String(bytes, Charset.defaultCharset()));
+        
+        if (teveErro) System.exit(54);
+        if (teveErroEmTempoDeExecucao) System.exit(60);
     }
     
     /**
@@ -79,11 +84,11 @@ public class Kavarador {
         List<Token> tokens = scanner.lerTokens();
         
         Parser parser = new Parser(tokens);
-        Expressao expressao = parser.parse();
+        List<Declaracao> declaracoes = parser.parse();
         
         if (teveErro) return;
         
-        System.out.println(new AstPrinter().print(expressao));
+        compilador.compilar(declaracoes);
     }
     
     /**
@@ -104,7 +109,12 @@ public class Kavarador {
         if (token.getTipoToken() == EOF) {
             reportarErro(token.getLinha(), " no fim", mensagem);
         } else {
-            reportarErro(token.getLinha(), " no " + token.getLexeme() + "'", mensagem);
+            reportarErro(token.getLinha(), "no " + token.getLexeme() + "'", mensagem);
         }
+    }
+    
+    public static void reportarErroEmExcecucao(RuntimeError error) {
+        System.err.println(error.getMensagem() + "\n[line " + error.token.getLinha() + "]");
+        teveErroEmTempoDeExecucao = true;
     }
 }

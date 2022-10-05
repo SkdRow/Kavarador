@@ -36,9 +36,7 @@ public class Leitor {
         palavras_chave.put("for",     FOR);
         palavras_chave.put("fun",     FUN);
         palavras_chave.put("while",   WHILE);
-        palavras_chave.put("string",  STRING_VAR);
-        palavras_chave.put("number",  NUMBER_VAR);
-        palavras_chave.put("boolean", BOOLEAN);
+        palavras_chave.put("var",  VAR);
         palavras_chave.put("return",  RETURN);
         palavras_chave.put("write",   WRITE);
     };
