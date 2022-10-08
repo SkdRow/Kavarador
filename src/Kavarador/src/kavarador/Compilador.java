@@ -116,8 +116,10 @@ public class Compilador implements Expressao.Visitor<Object>, Declaracao.Visitor
     }   
     
     @Override
-    public Object visitAssignExpressao(Expressao.Atribuicao expr) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public Object visitAtribuicaoExpressao(Expressao.Atribuicao expr) {
+        Object valor = avaliar(expr.value);
+        ambiente.definir(expr.name, valor);
+        return valor;
     }
     
     @Override

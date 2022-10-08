@@ -87,7 +87,25 @@ public class Parser {
      * @return 
      */
     private Expressao expr() {
-        return igualdade();
+        return atribuicao();
+    }
+    
+    private Expressao atribuicao() {
+        Expressao expressao = igualdade();
+        
+        if (igual(ATRIBUICAO)) {
+            Token igual = anterior();
+            Expressao valor = atribuicao();
+            
+            if (expressao instanceof Expressao.Variavel) {
+                Token variavel = ((Expressao.Variavel) expressao).name;
+                return new Expressao.Atribuicao(variavel, valor);
+            }
+            
+            error(igual, "Atribuição inválida");
+        }
+        
+        return expressao;
     }
     
     /**

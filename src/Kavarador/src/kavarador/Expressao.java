@@ -14,7 +14,7 @@ abstract class Expressao {
     abstract <R> R accept(Visitor<R> visitor);
     
     interface Visitor<R> {
-        R visitAssignExpressao(Atribuicao expr);
+        R visitAtribuicaoExpressao(Atribuicao expr);
         R visitBinaryExpressao(Binaria expr);
         R visitGroupingExpressao(Agrupamento expr);
         R visitLiteralExpressao(Literal expr);
@@ -33,7 +33,7 @@ abstract class Expressao {
 
         @Override
         <R> R accept(Visitor<R> visitor) {
-            return visitor.visitAssignExpressao(this);
+            return visitor.visitAtribuicaoExpressao(this);
         }
     }
     

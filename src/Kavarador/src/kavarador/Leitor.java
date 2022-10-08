@@ -128,7 +128,7 @@ public class Leitor {
                 if (verificarProximoToken('=')) {
                     adicionarToken(ATRIBUICAO);
                 } else {
-                    Kavarador.reportarErro(this.linha,"", "Os dois pontos da atribuição deve ser sucedido por =.");
+                    Kavarador.reportarErro(this.linha,"", "Os dois pontos da atribuição devem ser sucedidos por =.");
                 }                 
                 break;
             case '|':
