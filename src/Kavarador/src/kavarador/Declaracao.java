@@ -4,6 +4,7 @@
  */
 package kavarador;
 
+import java.util.List;
 import model.Token;
 
 /**
@@ -14,9 +15,25 @@ public abstract class Declaracao {
     abstract <R> R accept(Visitor<R> visitor);
     
     interface Visitor<R> {
+        R visitBlocoDecl(Bloco expr);
         R visitExpressaoDecl(Expr expr);
+        R visitIfDecl(If expr);
         R visitWriteDecl(WriteExpr expr);
         R visitVarDecl(Var expr);
+    }
+    
+    public static class Bloco extends Declaracao {
+        List<Declaracao> declaracoes;
+        
+        public Bloco(List<Declaracao> declaracoes) {
+            this.declaracoes = declaracoes;
+        }
+
+        @Override
+        <R> R accept(Visitor<R> visitor) {
+            return visitor.visitBlocoDecl(this);
+        }
+        
     }
     
     public static class Expr extends Declaracao {
@@ -29,6 +46,23 @@ public abstract class Declaracao {
         @Override
         <R> R accept(Visitor<R> visitor) {
             return visitor.visitExpressaoDecl(this);
+        }
+    }
+    
+    public static class If extends Declaracao {
+        final Expressao condicao;
+        final Declaracao branchExecucao;
+        final Declaracao branchElse;
+        
+        public If(Expressao condicao, Declaracao branchExecucao, Declaracao branchElse) {
+            this.condicao = condicao;
+            this.branchExecucao = branchExecucao;
+            this.branchElse = branchElse;
+        }
+        
+        @Override
+        <R> R accept(Visitor<R> visitor) {
+            return visitor.visitIfDecl(this);
         }
     }
     

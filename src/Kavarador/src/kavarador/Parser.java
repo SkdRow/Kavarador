@@ -63,23 +63,51 @@ public class Parser {
     }
     
     private Declaracao statement() {
-        if (igual(WRITE)) return declaracaoWrite();
+        if (igual(WRITE)) return writeStatement();
+        if (igual(IF)) return ifStatement();
+        if (igual(CHAVES_ESQ)) return new Declaracao.Bloco(bloco());
         
-        return declaracaoExpressao();
+        return expressaoStatement();
     }
     
-    private Declaracao declaracaoWrite() {
+    private Declaracao writeStatement() {
         Expressao valor = expr();
         
         consumir(PONTO_VIRGULA, "Espera-se ';' após o valor.");
         return new Declaracao.WriteExpr(valor);
     }
     
-    private Declaracao declaracaoExpressao() {
+    private Declaracao ifStatement() {
+        consumir(PARENTESES_ESQ, "Espera-se '(' após o 'if'. ");
+        
+        Expressao condicao = expr();
+        consumir(PARENTESES_DIR, "Espera-se ')' após a condição do if");
+        
+        Declaracao branchExecucao = statement();
+        Declaracao branchElse = null;
+        if (igual(ELSE)) {
+            branchElse = statement();
+        }
+        
+        return new Declaracao.If(condicao, branchExecucao, branchElse);
+    }
+    
+    private Declaracao expressaoStatement() {
         Expressao valor = expr();
         
         consumir(PONTO_VIRGULA, "Espera-se ';' após o valor.");
         return new Declaracao.Expr(valor);
+    }
+    
+    private List<Declaracao> bloco() {
+        List<Declaracao> declaracoes = new ArrayList<>();
+        
+        while (!checar(CHAVES_DIR) && !estaNoFim()) {
+            declaracoes.add(declaracao());
+        }
+        
+        consumir(CHAVES_DIR, "Espera-se } após o bloco.");
+        return declaracoes;
     }
     
     /**

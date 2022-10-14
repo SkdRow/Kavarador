@@ -94,7 +94,7 @@ public class Compilador implements Expressao.Visitor<Object>, Declaracao.Visitor
         
         switch (expr.operator.getTipoToken()) {
             case NEGACAO:
-                return ehVerdadeiro(direita);
+                return !ehVerdadeiro(direita);
             case MENOS:
                 checarOperando(expr.operator, direita);
                 return -(double)direita;
@@ -148,9 +148,20 @@ public class Compilador implements Expressao.Visitor<Object>, Declaracao.Visitor
         return expr.accept(this);
     }
     
+    public Void visitBlocoDecl(Declaracao.Bloco expr) {
+        executarBloco(expr.declaracoes, new Ambiente(ambiente));
+        
+        return null;
+    }
+    
     @Override
     public Void visitExpressaoDecl(Declaracao.Expr expr) {
         avaliar(expr.expression);
+        return null;
+    }
+    
+    @Override
+    public Void visitIfDecl(Declaracao.If decl) {
         return null;
     }
 
@@ -170,6 +181,19 @@ public class Compilador implements Expressao.Visitor<Object>, Declaracao.Visitor
         
         ambiente.definir(expr.name.getLexeme(), valor);
         return null;
+    }
+    
+    private void executarBloco(List<Declaracao> declaracoes, Ambiente ambiente) {
+        Ambiente ambienteAnterior = this.ambiente;
+        try {
+            this.ambiente = ambiente;
+            
+            for (Declaracao declaracao : declaracoes) {
+                executar(declaracao);
+            }
+        } finally {
+            this.ambiente = ambienteAnterior;
+        }
     }
 
     private boolean ehIgual(Object a, Object b) {
