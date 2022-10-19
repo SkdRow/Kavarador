@@ -6,6 +6,7 @@ package kavarador;
 
 import java.util.List;
 import model.Token;
+import model.TokenType;
 
 /**
  *
@@ -113,7 +114,20 @@ public class Compilador implements Expressao.Visitor<Object>, Declaracao.Visitor
         if (esquerda instanceof Double && direita instanceof Double) return;
         
         throw new RuntimeError(operador, "Operandos devem ser números.");
-    }   
+    }
+    
+    @Override
+    public Object visitLogicalExpressao(Expressao.Logical expr) {
+        Object esquerda = avaliar(expr.left);
+        
+        if (expr.operador.getTipoToken() == TokenType.OU) {
+            if (ehVerdadeiro(esquerda)) return esquerda;
+        } else {
+            if (!ehVerdadeiro(esquerda)) return esquerda;
+        }
+        
+        return avaliar(expr.right);
+    }
     
     @Override
     public Object visitAtribuicaoExpressao(Expressao.Atribuicao expr) {
@@ -162,6 +176,11 @@ public class Compilador implements Expressao.Visitor<Object>, Declaracao.Visitor
     
     @Override
     public Void visitIfDecl(Declaracao.If decl) {
+        if (ehVerdadeiro(avaliar(decl.condicao))) {
+            executar(decl.branchExecucao);
+        } else if (decl.branchElse != null) {
+            executar(decl.branchElse);
+        }
         return null;
     }
 

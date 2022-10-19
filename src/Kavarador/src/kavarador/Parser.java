@@ -119,7 +119,7 @@ public class Parser {
     }
     
     private Expressao atribuicao() {
-        Expressao expressao = igualdade();
+        Expressao expressao = ou();
         
         if (igual(ATRIBUICAO)) {
             Token igual = anterior();
@@ -131,6 +131,30 @@ public class Parser {
             }
             
             error(igual, "Atribuição inválida");
+        }
+        
+        return expressao;
+    }
+    
+    private Expressao ou() {
+        Expressao expressao = e();
+        
+        while (igual(OU)) {
+            Token operador = anterior();
+            Expressao direita = e();
+            expressao = new Expressao.Logical(expressao, operador, direita);
+        }
+        
+        return expressao;
+    }
+    
+    private Expressao e() {
+        Expressao expressao = igualdade();
+        
+        while (igual(E)) {
+            Token operador = anterior();
+            Expressao direita = igualdade();
+            expressao = new Expressao.Logical(expressao, operador, direita);
         }
         
         return expressao;

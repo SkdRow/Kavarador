@@ -1,20 +1,14 @@
-var a := "global a";
-var b := "global b";
-var c := "global c";
-{
-  var a := "outer a";
-  var b := "outer b";
-  {
-    var a := "inner a";
-    var b := b + a;
-    write a;
-    write b;
-    write c;
-  }
-  write a;
-  write b;
-  write c;
+var b := 10;
+var a := 20;
+
+if (a / b == 2) {
+ write "correct";
+} else {
+ write "something is wrong";
 }
-write a;
-write b;
-write c;
+
+if (true && 20 == 10) {
+  write "true";
+} else if (b + a == 30) {
+  write "30";
+}

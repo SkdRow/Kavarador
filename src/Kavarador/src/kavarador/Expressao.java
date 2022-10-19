@@ -18,6 +18,7 @@ abstract class Expressao {
         R visitBinaryExpressao(Binaria expr);
         R visitGroupingExpressao(Agrupamento expr);
         R visitLiteralExpressao(Literal expr);
+        R visitLogicalExpressao(Logical expr);
         R visitUnaryExpressao(Unaria expr);
         R visitVariableExpresssao(Variavel expr);
     }
@@ -78,6 +79,24 @@ abstract class Expressao {
         <R> R accept(Visitor<R> visitor) {
             return visitor.visitLiteralExpressao(this);
         }
+    }
+    
+    static class Logical extends Expressao {
+        final Expressao left;
+        final Token operador;
+        final Expressao right;
+
+        public Logical(Expressao left, Token operador, Expressao right) {
+            this.left = left;
+            this.operador = operador;
+            this.right = right;
+        }
+
+        @Override
+        <R> R accept(Visitor<R> visitor) {
+            return visitor.visitLogicalExpressao(this);
+        }
+        
     }
     
     static class Unaria extends Expressao {
