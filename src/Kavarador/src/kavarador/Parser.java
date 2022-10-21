@@ -215,7 +215,7 @@ public class Parser {
     private Expressao fator() {
         Expressao expr = unaria();
         
-        while (igual(ESTRELA, BARRA)) {
+        while (igual(ESTRELA, BARRA, MODULO)) {
             Token operador = anterior();
             Expressao direita = unaria();
             expr = new Expressao.Binaria(expr, operador, direita);

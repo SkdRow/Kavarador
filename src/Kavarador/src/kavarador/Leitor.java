@@ -83,6 +83,7 @@ public class Leitor {
             case ',': adicionarToken(VIRGULA); break;
             case '-': adicionarToken(MENOS); break;
             case '+': adicionarToken(MAIS); break;
+            case '%': adicionarToken(MODULO); break;
             case ';': adicionarToken(PONTO_VIRGULA); break;
             case '*': adicionarToken(ESTRELA); break;
             case '!': adicionarToken(NEGACAO); break;

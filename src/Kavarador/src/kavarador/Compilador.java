@@ -70,6 +70,9 @@ public class Compilador implements Expressao.Visitor<Object>, Declaracao.Visitor
             case ESTRELA:
                 checarOperandos(expr.operator, esquerda, direita);
                 return (double)esquerda * (double)direita;
+            case MODULO:
+                checarOperandos(expr.operator, esquerda, direita);
+                return (double)esquerda % (double)direita;
             case IGUAL:
                 return ehIgual(esquerda, direita);
             case DIFERENTE:
