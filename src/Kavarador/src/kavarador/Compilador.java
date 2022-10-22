@@ -186,6 +186,14 @@ public class Compilador implements Expressao.Visitor<Object>, Declaracao.Visitor
         }
         return null;
     }
+    
+    @Override
+    public Void visitWhileDecl(Declaracao.While declr) {
+        while (ehVerdadeiro(avaliar(declr.condicao))) {
+            executar(declr.branchExecucao);
+        }
+        return null;
+    }
 
     @Override
     public Void visitWriteDecl(Declaracao.WriteExpr expr) {

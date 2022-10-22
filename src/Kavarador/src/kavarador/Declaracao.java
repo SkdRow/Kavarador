@@ -18,6 +18,7 @@ public abstract class Declaracao {
         R visitBlocoDecl(Bloco expr);
         R visitExpressaoDecl(Expr expr);
         R visitIfDecl(If expr);
+        R visitWhileDecl(While expr);
         R visitWriteDecl(WriteExpr expr);
         R visitVarDecl(Var expr);
     }
@@ -63,6 +64,21 @@ public abstract class Declaracao {
         @Override
         <R> R accept(Visitor<R> visitor) {
             return visitor.visitIfDecl(this);
+        }
+    }
+    
+    public static class While extends Declaracao {
+        final Expressao condicao;
+        final Declaracao branchExecucao;
+        
+        public While(Expressao condicao, Declaracao branchExecucao) {
+            this.condicao = condicao;
+            this.branchExecucao = branchExecucao;
+        }
+        
+        @Override
+        <R> R accept(Visitor<R> visitor) {
+            return visitor.visitWhileDecl(this);
         }
     }
     

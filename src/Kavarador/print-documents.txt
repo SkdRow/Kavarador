@@ -1,14 +1,15 @@
-var b := 10;
-var a := 20;
+var number := 1;
 
-if (a / b == 2) {
- write "correct";
-} else {
- write "something is wrong";
-}
+while (number <= 200) {
+	if (number % 7 == 0 && number % 4 == 0) {
+		write "xxxyyy";
+	} else if (number % 7 == 0) {
+		write "yyy";
+	} else if (number % 4 == 0) {
+		write "xxx";
+	} else {
+		write number;
+	}
 
-if (true && 20 == 10) {
-  write "true";
-} else if (b + a == 30) {
-  write "30";
+	number := number + 1;
 }

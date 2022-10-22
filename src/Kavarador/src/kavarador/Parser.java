@@ -65,6 +65,7 @@ public class Parser {
     private Declaracao statement() {
         if (igual(WRITE)) return writeStatement();
         if (igual(IF)) return ifStatement();
+        if (igual(WHILE)) return whileStatement();
         if (igual(CHAVES_ESQ)) return new Declaracao.Bloco(bloco());
         
         return expressaoStatement();
@@ -90,6 +91,17 @@ public class Parser {
         }
         
         return new Declaracao.If(condicao, branchExecucao, branchElse);
+    }
+    
+    private Declaracao whileStatement() {
+        consumir(PARENTESES_ESQ, "Espera-se '(' após o 'while'.");
+        
+        Expressao condicao = expr();
+        consumir(PARENTESES_DIR, "Espera-se ')' após a condição do while");
+        
+        Declaracao branchExecucao = statement();
+        
+        return new Declaracao.While(condicao, branchExecucao);
     }
     
     private Declaracao expressaoStatement() {
