@@ -1,6 +1,7 @@
 package kavarador;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import model.Token;
 import model.TokenType;
@@ -66,6 +67,7 @@ public class Parser {
         if (igual(WRITE)) return writeStatement();
         if (igual(IF)) return ifStatement();
         if (igual(WHILE)) return whileStatement();
+        if (igual(FOR)) return forStatement();
         if (igual(CHAVES_ESQ)) return new Declaracao.Bloco(bloco());
         
         return expressaoStatement();
@@ -91,6 +93,53 @@ public class Parser {
         }
         
         return new Declaracao.If(condicao, branchExecucao, branchElse);
+    }
+    
+    private Declaracao forStatement() {
+        consumir(PARENTESES_ESQ, "Espera-se '(' após o 'for'. ");
+        
+        Declaracao inicializador;
+        if (igual(PONTO_VIRGULA)) {
+            inicializador = null;
+        } else if (igual(VAR)) {
+            inicializador = declaracaoVar();
+        } else {
+            inicializador = expressaoStatement();
+        }
+        
+        Expressao condicao = null;
+        if (!checar(PONTO_VIRGULA)) {
+            condicao = expr();
+        }
+        
+        consumir(PONTO_VIRGULA, "Espera-se ';' após a condição do for.");
+        
+        Expressao incremento = null;
+        if (!checar(PARENTESES_DIR)) {
+            incremento = expr();
+        }
+        
+        System.out.println(incremento);
+        
+        consumir(PARENTESES_DIR, "Espera-se ')' após as cláusulas do for.");
+        
+        Declaracao corpo = statement();
+        
+        if (incremento != null) {
+            corpo = new Declaracao.Bloco(
+                Arrays.asList(
+                    corpo,
+                    new Declaracao.Expr(incremento)));
+        }
+        
+        if (condicao == null) condicao = new Expressao.Literal(true);
+        corpo = new Declaracao.While(condicao, corpo);
+        
+        if (inicializador != null) {
+            corpo = new Declaracao.Bloco(Arrays.asList(inicializador, corpo));
+        }
+        
+        return corpo;
     }
     
     private Declaracao whileStatement() {
