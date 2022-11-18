@@ -4,6 +4,7 @@
  */
 package kavarador;
 
+import java.util.List;
 import model.Token;
 
 /**
@@ -16,6 +17,7 @@ abstract class Expressao {
     interface Visitor<R> {
         R visitAtribuicaoExpressao(Atribuicao expr);
         R visitBinaryExpressao(Binaria expr);
+        R visitFuncaoExpressao(Funcao expr);
         R visitGroupingExpressao(Agrupamento expr);
         R visitLiteralExpressao(Literal expr);
         R visitLogicalExpressao(Logical expr);
@@ -52,6 +54,23 @@ abstract class Expressao {
         @Override
         <R> R accept(Visitor<R> visitor) {
             return visitor.visitBinaryExpressao(this);
+        }
+    }
+    
+    static class Funcao extends Expressao {
+        final Expressao calle;
+        final Token parenteses;
+        List<Expressao> argumentos;
+        
+        Funcao(Expressao calle, Token parenteses, List<Expressao> argumentos) {
+            this.calle = calle;
+            this.parenteses = parenteses;
+            this.argumentos = argumentos;
+        }
+        
+        @Override
+        <R> R accept(Visitor<R> visitor) {
+            return visitor.visitFuncaoExpressao(this);
         }
     }
     

@@ -4,6 +4,7 @@
  */
 package kavarador;
 
+import java.util.ArrayList;
 import java.util.List;
 import model.Token;
 import model.TokenType;
@@ -13,7 +14,27 @@ import model.TokenType;
  * @author guilherme.tonetti
  */
 public class Compilador implements Expressao.Visitor<Object>, Declaracao.Visitor<Void> {
-    private Ambiente ambiente = new Ambiente();
+    final Ambiente globals = new Ambiente();
+    private Ambiente ambiente = globals;
+    
+    Compilador() {
+        globals.definir("clock", new KCallable() {
+            @Override
+            public int arity() {
+                return 0;
+            }
+
+            @Override
+            public Object chamar(Compilador compilador, List<Object> argumentos) {
+                return (double)System.currentTimeMillis() / 1000.0;
+            }
+
+            @Override
+            public String toString() {
+                return "função nativa";
+            }
+        });
+    }
     
     void compilar(List<Declaracao> declaracoes) {
         try {
@@ -80,6 +101,30 @@ public class Compilador implements Expressao.Visitor<Object>, Declaracao.Visitor
         }
         
         return null;
+    }
+    
+    @Override
+    public Object visitFuncaoExpressao(Expressao.Funcao expr) {
+        Object calle = this.avaliar(expr.calle);
+        
+        List<Object> arguments = new ArrayList<>();
+        for (Expressao argument : expr.argumentos) {
+            arguments.add(avaliar(argument));
+        }
+        
+        if (!(calle instanceof KCallable)) {
+            throw new RuntimeError(expr.parenteses, "Somente funções suportam chamadas!");
+        }
+        
+        KCallable funcao = (KCallable)calle;
+        
+        if (arguments.size() != funcao.arity()) {
+            throw new RuntimeError(expr.parenteses, "Espera-se " +
+                    funcao.arity() + " argumentos, mas obteve " +
+                    arguments.size() + ".");
+        }
+        
+        return funcao.chamar(this, arguments);
     }
 
     @Override
@@ -178,6 +223,13 @@ public class Compilador implements Expressao.Visitor<Object>, Declaracao.Visitor
     }
     
     @Override
+    public Void visitFunctionDecl(Declaracao.Function expr) {
+        KFunction funcao = new KFunction(expr);
+        ambiente.definir(expr.name.getLexeme(), funcao);
+        return null;
+    }
+    
+    @Override
     public Void visitIfDecl(Declaracao.If decl) {
         if (ehVerdadeiro(avaliar(decl.condicao))) {
             executar(decl.branchExecucao);
@@ -203,6 +255,14 @@ public class Compilador implements Expressao.Visitor<Object>, Declaracao.Visitor
     }
     
     @Override
+    public Void visitReturnDecl(Declaracao.Return expr) {
+        Object valor = null;
+        if (expr.valor != null) valor = avaliar(expr.valor);
+        
+        throw new Return(valor);
+    }
+    
+    @Override
     public Void visitVarDecl(Declaracao.Var expr) {
         Object valor = null;
         if (expr.inicializador != null) {
@@ -213,7 +273,7 @@ public class Compilador implements Expressao.Visitor<Object>, Declaracao.Visitor
         return null;
     }
     
-    private void executarBloco(List<Declaracao> declaracoes, Ambiente ambiente) {
+    public void executarBloco(List<Declaracao> declaracoes, Ambiente ambiente) {
         Ambiente ambienteAnterior = this.ambiente;
         try {
             this.ambiente = ambiente;

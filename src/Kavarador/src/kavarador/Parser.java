@@ -42,6 +42,7 @@ public class Parser {
     
     private Declaracao declaracao() {
         try {
+            if (igual(FUNCTION)) return funcao();
             if (igual(VAR)) return declaracaoVar();
             
             return statement();
@@ -49,6 +50,29 @@ public class Parser {
             sincronizar();
             return null;
         }
+    }
+    
+    private Declaracao.Function funcao() {
+        Token nome = consumir(IDENTIFICADOR, "Espera-se o nome da função.");
+        
+        consumir(PARENTESES_ESQ, "Espera-se ( após o nome da função.");
+                
+        List<Token> parameters = new ArrayList<>();
+        if (!checar(PARENTESES_DIR)) {
+            do {
+                if (parameters.size() >= 255) {
+                    error(olhar(), "Não pode ter mais do que 255 parâmetros");
+                }
+                
+                parameters.add(consumir(IDENTIFICADOR, "Espera-se nome do parâmetro"));
+            } while (igual(VIRGULA));
+        }
+        
+        consumir(PARENTESES_DIR, "Espera-se ) após os parâmetros");
+        consumir(CHAVES_ESQ, "Espera-se { antes do corpo da função");
+        
+        List<Declaracao> corpo = bloco();
+        return new Declaracao.Function(nome, parameters, corpo);
     }
     
     private Declaracao declaracaoVar() {
@@ -66,6 +90,7 @@ public class Parser {
     private Declaracao statement() {
         if (igual(WRITE)) return writeStatement();
         if (igual(IF)) return ifStatement();
+        if (igual(RETURN)) return returnStatement();
         if (igual(WHILE)) return whileStatement();
         if (igual(FOR)) return forStatement();
         if (igual(CHAVES_ESQ)) return new Declaracao.Bloco(bloco());
@@ -93,6 +118,17 @@ public class Parser {
         }
         
         return new Declaracao.If(condicao, branchExecucao, branchElse);
+    }
+    
+    private Declaracao returnStatement() {
+        Token palavrachave = anterior(); // Obtendo o return.
+        Expressao valor = null;
+        if (!igual(PONTO_VIRGULA)) {
+            valor = expr();
+        }
+        
+        consumir(PONTO_VIRGULA, "Espera-se ; após return.");
+        return new Declaracao.Return(palavrachave, valor);
     }
     
     private Declaracao forStatement() {
@@ -296,7 +332,39 @@ public class Parser {
             return new Expressao.Unaria(operador, direita);
         }
         
-        return primaria();
+        return chamada();
+    }
+    
+    private Expressao chamada() {
+        Expressao expr = primaria();
+        
+        while (true) {
+            if (igual(PARENTESES_ESQ)) {
+                expr = finalizarChamada(expr);
+            } else {
+                break;
+            }
+        }
+        
+        return expr;
+    }
+    
+    private Expressao finalizarChamada(Expressao calle) {
+        List<Expressao> arguments = new ArrayList<>();
+        
+        if (!checar(PARENTESES_DIR)) {
+            do {
+                if (arguments.size() >= 255) {
+                    error(olhar(), "Não pode ter mais do que 255 parâmetros");
+                }
+                
+                arguments.add(expr());
+            } while (igual(VIRGULA));
+        }
+        
+        Token parenteses = consumir(PARENTESES_DIR, "Espera-se ) após a expressão.");
+        
+        return new Expressao.Funcao(calle, parenteses, arguments);
     }
     
     /**
@@ -418,7 +486,7 @@ public class Parser {
             if (anterior().getTipoToken() == PONTO_VIRGULA) return;
             
             switch (olhar().getTipoToken()) {
-                case FUN:
+                case FUNCTION:
                 case VAR:
                 case FOR:
                 case IF:

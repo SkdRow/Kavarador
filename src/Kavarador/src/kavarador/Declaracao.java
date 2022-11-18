@@ -17,9 +17,11 @@ public abstract class Declaracao {
     interface Visitor<R> {
         R visitBlocoDecl(Bloco expr);
         R visitExpressaoDecl(Expr expr);
+        R visitFunctionDecl(Function expr);
         R visitIfDecl(If expr);
         R visitWhileDecl(While expr);
         R visitWriteDecl(WriteExpr expr);
+        R visitReturnDecl(Return expr);
         R visitVarDecl(Var expr);
     }
     
@@ -47,6 +49,23 @@ public abstract class Declaracao {
         @Override
         <R> R accept(Visitor<R> visitor) {
             return visitor.visitExpressaoDecl(this);
+        }
+    }
+    
+    public static class Function extends Declaracao {
+        final Token name;
+        final List<Token> parameters;
+        final List<Declaracao> corpo;
+        
+        public Function(Token name, List<Token> parameters, List<Declaracao> corpo) {
+            this.name = name;
+            this.parameters = parameters;
+            this.corpo = corpo;
+        }
+        
+        @Override
+        <R> R accept(Visitor<R> visitor) {
+            return visitor.visitFunctionDecl(this);
         }
     }
     
@@ -92,6 +111,21 @@ public abstract class Declaracao {
         @Override
         <R> R accept(Visitor<R> visitor) {
             return visitor.visitWriteDecl(this);
+        }
+    }
+    
+    static class Return extends Declaracao {
+        Token keyword;
+        Expressao valor;
+        
+        Return(Token keyword, Expressao valor) {
+            this.keyword = keyword;
+            this.valor = valor;
+        }
+        
+        @Override
+        <R> R accept(Visitor<R> visitor) {
+            return visitor.visitReturnDecl(this);
         }
     }
     

@@ -25,7 +25,7 @@ public enum TokenType {
     IDENTIFICADOR, STRING_LITERAL, NUMBER_LITERAL,
     
     // Palavras-chave.
-    FUN, WHILE, VAR, IF, ELSE, FALSE, TRUE, RETURN,
+    FUNCTION, WHILE, VAR, IF, ELSE, FALSE, TRUE, RETURN,
     NIL, WRITE, FOR,
     
     EOF
