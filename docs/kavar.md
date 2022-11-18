@@ -14,6 +14,8 @@ O código abaixo exibe uma frase na tela:
 
 A omissão dos parenteses indica que se trata de uma função pré-feita (*statement*) da própria linguagem. Portanto, não se refere a uma função criada pelo usuário.
 
+O ; indica o fim de uma declaração ou expressão.
+
 ---
 
 ## Tipos de Dados
@@ -36,15 +38,16 @@ Conforme pode ser visto, utilize as duas barras (`//`) para indicar o início de
 
 ## Variáveis
 
-Como as variáveis na linguagem são fortemente tipadas, será necessário especificar o tipo da informação para alocar o respectivo espaço na memória. Portanto, atribuir um valor a um tipo de dados diferente (uma string a uma variável do tipo number, por exemplo) ou omitir o tipo da variável resultará em erro de compilação.
+Como as variáveis na linguagem são dinamicamente tipadas, os tipos das variáveis serão tratadas em tempo de execução.
+
+Portanto, atribuir um valor a um tipo de dados diferente (uma string a uma variável do tipo number, por exemplo) ou omitir o tipo da variável resultará em erro de compilação.
 
 Para declarar uma variável com um valor inicial:
 
-* `number pi := 3.14; // para declarar uma variável do tipo number.`
-* `string text := "That's a text"; // para declarar uma string.`
-* `bool isTrue := !false; // para declarar uma variável booleana.`
-
-O tipo de dados *Nil* pode ser atribuído para *number* e *string*, mas não pode ser atribuído ao tipo *bool*.
+* `var pi := 3.14; // para declarar uma variável do tipo number.`
+* `var text := "That's a text"; // para declarar uma string.`
+* `var isTrue := !false; // para declarar uma variável booleana.`
+* `var test := nil; // para declarar uma variável com um valor vazio.`
 
 **Obs**: a atribuição de dados é feita através do operador `:-`.
 
@@ -60,6 +63,7 @@ As operações comumente utilizadas por outras linguagens também estão present
 * `12 - 9;`
 * `45 * 1;`
 * `5 / 4;`
+* `2 % 2;`
 
 Tentar dividir um número diretamente por 0 resultará em erro de compilação, mas interromperá a aplicação caso aconteça em tempo de execução.
 
@@ -143,7 +147,7 @@ A variável utilizada dentro do laço de repetição `for` pode ser declarada ju
 A declaração de uma função deve ocorrer previamente antes de ser utilizada, seja apenas declarando ou instanciando com um valor. Para declarar uma função, sem parâmetros:
 
 ```c
-void fun arrumarCasa() {
+function arrumarCasa() {
 
 }
 ```
@@ -151,7 +155,7 @@ void fun arrumarCasa() {
 Para declarar uma função, com parâmetros:
 
 ```c
-void fun arrumarCasa(string piso, string vassoura) {
+function arrumarCasa(piso, vassoura) {
 
 }
 ```
@@ -165,7 +169,7 @@ arrumarCasa();
 Com parâmetros:
 
 ```c
-arrumarCasa(piso, vassoura);
+arrumarCasa("madeira", "de metal");
 ```
 
 * A variável que armazenará o conteúdo retornado pela função deve ser o mesmo que o estipulado pela própria função.
